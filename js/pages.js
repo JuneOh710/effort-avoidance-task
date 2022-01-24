@@ -51,7 +51,9 @@ const PAGES = {
             <button type="button" class="btn btn-primary form-control" onclick="saveResultAndNext(1, 'difficulty', 'endingPage')" disabled>Next</button>
         </form>
     `,
-
+    questionsPage: `
+    
+    `,
 
     endingPage: `
     <p class="h3">

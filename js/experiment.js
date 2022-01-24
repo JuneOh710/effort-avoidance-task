@@ -28,7 +28,8 @@ function saveResultAndNext(trialNumber, dataType, nextPage) {
     }
 
     console.log(RESULTS);
-    renderNextPage(nextPage);
+    // renderNextPage(nextPage);
+    renderQuestion(checkedOption);
 }
 
 function activateNext() {
@@ -36,19 +37,41 @@ function activateNext() {
     btn.disabled = false;
 }
 
+function renderQuestion(difficulty) {
+    const body = document.getElementsByTagName("body")[0];
+    const questionType = { "easy": EASY_QUESTIONS, "hard": HARD_QUESTIONS }
+    let questionHTML;
+    let question;
 
-function generateQuestion(difficulty) {
+    question = questionType[difficulty][Math.floor(Math.random() * questionType[difficulty].length)];
+    // question = [[5, 8, 10, 11], [5, 8, 10, 9], [8, 9, 6, 5], [4, 6, 5, 8]]
+    let currentIndex = question.length;
+    let randomIndex;
 
-}
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
 
-function getDigit(position) {
-    return getRandomInt(0, 10) * position;
+        // And swap it with the current element.
+        [question[currentIndex], question[randomIndex]] = [
+            question[randomIndex], question[currentIndex]];
+    }
+    questionHTML = question.map(el => {
+
+        return `
+        <div class="form-check mb-5">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" value="${el}" id="easy" onclick="activateNext();"
+                    required>
+                <label class="form-check-label" for="${el}">
+                    ${el.join(", ")}
+                </label >
+            </div >
+            `;
+    })
+    body.innerHTML = questionHTML.join(" ");
 }
 
 // how to save final result, I think:
