@@ -36,8 +36,9 @@ function saveResultAndNext(incrementQuestion, dataType) {
         renderOptionsPage();
     }
     QUESTION_NUMBER += incrementQuestion;
-    console.log(RESULTS);
-    // renderNextPage(nextPage);
+    if (!isProduction) {
+        console.log(RESULTS);
+    }
 }
 
 function renderOptionsPage() {
