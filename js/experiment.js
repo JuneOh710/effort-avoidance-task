@@ -30,6 +30,9 @@ function saveResultAndNext(incrementQuestion, dataType) {
         renderQuestion(checkedOption);
     } else if (dataType == "correctness") {
         RESULTS[QUESTION_NUMBER].correctness = isCorrect(checkedOption);
+        if (isCorrect(checkedOption)) {
+            RESULTS["totalRewards"] += RESULTS[QUESTION_NUMBER].reward;
+        };
         if (QUESTION_NUMBER == UPDATE_AMOUNT.length) {
             return renderNextPage("endingPage");
         }
@@ -70,7 +73,7 @@ function isCorrect(check) {
     let prev = check[0];
     for (let i = 1; i < check.length; i++) {
         curr = check[i];
-        if (curr < prev) {
+        if (parseInt(curr) < parseInt(prev)) {
             return false;
         }
         prev = curr;
