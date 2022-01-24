@@ -1,6 +1,3 @@
-const updateAmount = [50, 25, 13, 6, 3, 2, 1];
-let easyTicket = 100;
-let hardTicket = 200;
 // === for Daniel to edit ===
 const instructions = `
 <p>
@@ -27,7 +24,7 @@ const PAGES = {
         <p class="h3">
             ${instructions}
         </p>
-        <button class="btn btn-primary" onclick="renderNextPage('optionsPage');">
+        <button class="btn btn-primary" onclick="renderOptionsPage();">
             End instructions
         </button>
     `,
@@ -38,21 +35,21 @@ const PAGES = {
                 <input class="form-check-input" type="radio" name="flexRadioDefault" value="easy" id="easy" onclick="activateNext();"
                     required>
                 <label class="form-check-label" for="easy">
-                    Easy task for ${easyTicket} tickets
+                    Easy task for ${REWARDS["easy"]} tickets
                 </label>
             </div>
             <div class="form-check mb-5">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" value="hard" id="hard" onclick="activateNext();"
                     required>
                 <label class="form-check-label" for="hard">
-                    Hard task for ${hardTicket} tickets
+                    Hard task for ${REWARDS["hard"]} tickets
                 </label>
             </div>
-            <button type="button" class="btn btn-primary form-control" onclick="saveResultAndNext(1, 'difficulty', 'endingPage')" disabled>Next</button>
+            <button type="button" class="btn btn-primary form-control" onclick="saveResultAndNext(0, 'difficulty')" disabled>Next</button>
         </form>
     `,
     questionsPage: `
-    
+
     `,
 
     endingPage: `

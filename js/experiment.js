@@ -1,6 +1,3 @@
-const RESULTS = {};
-const isProduction = false;
-
 function renderNextPage(nextPage) {
     const body = document.getElementsByTagName("body")[0];
     body.innerHTML = PAGES[nextPage];
@@ -9,27 +6,75 @@ function renderNextPage(nextPage) {
     }
 }
 
-function saveResultAndNext(trialNumber, dataType, nextPage) {
+function saveResultAndNext(incrementQuestion, dataType) {
     const radioOptions = document.getElementsByClassName("form-check-input");
+
     let checkedOption;
     for (let i = 0; i < radioOptions.length; i++) {
         if (radioOptions[i].checked == true) {
             checkedOption = radioOptions[i].value;
         }
     }
-    if (!RESULTS[trialNumber]) {
-        RESULTS[trialNumber] = {};
+    if (!RESULTS[QUESTION_NUMBER]) {
+        RESULTS[QUESTION_NUMBER] = {};
     }
 
     if (dataType == "difficulty") {
-        RESULTS[trialNumber].difficulty = checkedOption;
+        RESULTS[QUESTION_NUMBER].difficulty = checkedOption;
+        RESULTS[QUESTION_NUMBER].reward = REWARDS[checkedOption];
+        if (checkedOption == "hard") {
+            REWARDS["easy"] += UPDATE_AMOUNT[QUESTION_NUMBER];
+        } else {
+            REWARDS["easy"] -= UPDATE_AMOUNT[QUESTION_NUMBER];
+        }
+        renderQuestion(checkedOption);
     } else if (dataType == "correctness") {
-        RESULTS[trialNumber].correctness = checkedOption;
+        RESULTS[QUESTION_NUMBER].correctness = isCorrect(checkedOption);
+        if (QUESTION_NUMBER == UPDATE_AMOUNT.length) {
+            return renderNextPage("endingPage");
+        }
+        renderOptionsPage();
     }
-
+    QUESTION_NUMBER += incrementQuestion;
     console.log(RESULTS);
     // renderNextPage(nextPage);
-    renderQuestion(checkedOption);
+}
+
+function renderOptionsPage() {
+    const body = document.getElementsByTagName("body")[0];
+    body.innerHTML = `
+    <form class="needs-validation" nonvalidate>
+            <div class="form-check mb-5">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" value="easy" id="easy" onclick="activateNext();"
+                    required>
+                <label class="form-check-label" for="easy">
+                    Easy task for ${REWARDS["easy"]} tickets
+                </label>
+            </div>
+            <div class="form-check mb-5">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" value="hard" id="hard" onclick="activateNext();"
+                    required>
+                <label class="form-check-label" for="hard">
+                    Hard task for ${REWARDS["hard"]} tickets
+                </label>
+            </div>
+            <button type="button" class="btn btn-primary form-control" onclick="saveResultAndNext(0, 'difficulty')" disabled>Next</button>
+        </form>
+    `;
+}
+
+function isCorrect(check) {
+    check = check.split(",");
+    let curr;
+    let prev = check[0];
+    for (let i = 1; i < check.length; i++) {
+        curr = check[i];
+        if (curr < prev) {
+            return false;
+        }
+        prev = curr;
+    }
+    return true;
 }
 
 function activateNext() {
@@ -62,8 +107,8 @@ function renderQuestion(difficulty) {
     questionHTML = question.map(el => {
 
         return `
-        <div class="form-check mb-5">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" value="${el}" id="easy" onclick="activateNext();"
+        <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" value="${el}" id="${el}" onclick="activateNext();"
                     required>
                 <label class="form-check-label" for="${el}">
                     ${el.join(", ")}
@@ -71,7 +116,9 @@ function renderQuestion(difficulty) {
             </div >
             `;
     })
-    body.innerHTML = questionHTML.join(" ");
+    body.innerHTML = `<form class="needs-validation" nonvalidate> <p class="h3 mb-3">Select the option that displays the numbers in order from least to greatest.</p>` +
+        questionHTML.join(" ") +
+        `<button type="button" class="btn btn-primary form-control" onclick="saveResultAndNext(1, 'correctness')" disabled>Next</button></form>`;
 }
 
 // how to save final result, I think:
